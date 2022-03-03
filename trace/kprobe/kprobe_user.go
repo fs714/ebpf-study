@@ -15,12 +15,11 @@ import (
 	"github.com/cilium/ebpf/rlimit"
 )
 
-//go:generate go run github.com/cilium/ebpf/cmd/bpf2go -target amd64 -cc clang-10 bpf_fs ./kprobe.c -- -nostdinc -Wall -Werror -I../headers
+//go:generate go run github.com/cilium/ebpf/cmd/bpf2go -target amd64 -cc clang-10 exampleKprobe ./kprobe_kern.c -- -nostdinc -Wall -Werror -I../../include -I../../libbpf/src
 
 const mapKey uint32 = 0
 
 func main() {
-
 	// Name of the kernel function to trace.
 	fn := "sys_execve"
 
@@ -30,8 +29,8 @@ func main() {
 	}
 
 	// Load pre-compiled programs and maps into the kernel.
-	objs := bpf_fsObjects{}
-	if err := loadBpf_fsObjects(&objs, nil); err != nil {
+	objs := exampleKprobeObjects{}
+	if err := loadExampleKprobeObjects(&objs, nil); err != nil {
 		log.Fatalf("loading objects: %v", err)
 	}
 	defer objs.Close()

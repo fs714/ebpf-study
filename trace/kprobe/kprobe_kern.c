@@ -1,16 +1,19 @@
+//go:build ignore
 // +build ignore
 
-#include "common.h"
-#include "bpf_helpers.h"
+#include <vmlinux.h>
+#include <bpf_helpers.h>
 
-char __license[] SEC("license") = "Dual MIT/GPL";
+char LICENSE[] SEC("license") = "Dual BSD/GPL";
 
-struct bpf_map_def SEC("maps") kprobe_map = {
-    .type = BPF_MAP_TYPE_ARRAY,
-    .key_size = sizeof(u32),
-    .value_size = sizeof(u64),
-    .max_entries = 1,
-};
+
+struct {
+    __uint(type, BPF_MAP_TYPE_ARRAY);
+    __uint(max_entries, 1);
+    __type(key, u32);
+    __type(value, u64);
+} kprobe_map SEC(".maps");
+
 
 SEC("kprobe/sys_execve")
 int kprobe_execve() {
